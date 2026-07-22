@@ -1,346 +1,224 @@
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
-import { useModal } from "@/app/context/ModalContext";
+import { useState } from "react";
 
-const DOMAINS = [
-  "Product Management",
-  "CFO",
-  "Data Science",
-  "Artificial Intelligence",
-  "Human Resource",
-  "Strategy & Leadership",
-  "Digital Transformation",
-  "Business Management",
-  "Finance",
-];
+export default function EnquiryModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    domain: "",
+    candidates: "",
+    mode: "",
+    location: "",
+  });
 
-interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  domain: string;
-  candidates: string;
-  deliveryMode: string;
-  location: string;
-}
-
-const INITIAL: FormData = {
-  name: "",
-  email: "",
-  phone: "",
-  company: "",
-  domain: "",
-  candidates: "",
-  deliveryMode: "",
-  location: "",
-};
-
-type Status = "idle" | "loading" | "success" | "error";
-
-export default function EnquireModal() {
-  const { isOpen, closeModal } = useModal();
-  const [form, setForm] = useState<FormData>(INITIAL);
-  const [status, setStatus] = useState<Status>("idle");
-  const [errorMsg, setErrorMsg] = useState("");
-
-  useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [isOpen]);
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeModal();
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [closeModal]);
-
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  }
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setStatus("loading");
-    setErrorMsg("");
-    try {
-      const res = await fetch("/api/lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setStatus("success");
-        setForm(INITIAL);
-      } else {
-        setErrorMsg(data.error ?? "Something went wrong.");
-        setStatus("error");
-      }
-    } catch {
-      setErrorMsg("Network error. Please try again.");
-      setStatus("error");
-    }
-  }
-
-  function handleClose() {
-    closeModal();
-    setTimeout(() => {
-      setStatus("idle");
-      setErrorMsg("");
-    }, 300);
-  }
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   if (!isOpen) return null;
 
-  return (
-    <div
-      id="enquire-modal-overlay"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="modal-title"
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
-      onClick={(e) => e.target === e.currentTarget && handleClose()}
-    >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-      {/* Panel */}
-      <div className="relative z-10 w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl border border-gray-200">
-        {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4">
-          <div>
-            <h2 id="modal-title" className="text-lg font-extrabold text-slate-900">
-              Enquire Now
-            </h2>
-            <p className="text-xs text-slate-500">
-              Fill in your details and our team will reach out within 24 hours.
-            </p>
-          </div>
-          <button
-            id="modal-close-btn"
-            onClick={handleClose}
-            aria-label="Close modal"
-            className="rounded-md p-1.5 text-slate-400 hover:bg-gray-100 hover:text-slate-700 transition-colors"
-          >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSuccessMessage(true);
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          company: "",
+          domain: "",
+          candidates: "",
+          mode: "",
+          location: "",
+        });
+      } else {
+        setErrorMessage(data.error || "Submission failed");
+      }
+    } catch {
+      setErrorMessage("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 sm:p-8 overflow-y-auto max-h-[90vh]">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-xl"
+        >
+          &times;
+        </button>
+
+        <div className="mb-6">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Enquire Now</h2>
+          <p className="text-xs sm:text-sm text-slate-500">Fill in your details and our team will reach out within 24 hours.</p>
         </div>
 
-        {/* Body */}
-        <div className="px-6 py-5">
-          {status === "success" ? (
-            <div className="flex flex-col items-center justify-center py-10 text-center gap-3">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-50">
-                <svg className="h-7 w-7 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-extrabold text-slate-900">
-                Enquiry Submitted!
-              </h3>
-              <p className="max-w-sm text-xs text-slate-600">
-                Thank you for reaching out. Our enterprise team will contact you within 24 business hours.
-              </p>
-              <button
-                id="modal-success-close-btn"
-                onClick={handleClose}
-                className="mt-2 px-6 py-2.5 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors text-xs"
-              >
-                Close
-              </button>
-            </div>
-          ) : (
-            <form
-              id="enquire-form"
-              onSubmit={handleSubmit}
-              noValidate
-              className="flex flex-col gap-4"
+        {successMessage ? (
+          <div className="py-12 text-center">
+            <h3 className="text-lg font-bold text-green-600 mb-2">Thank You!</h3>
+            <p className="text-sm text-slate-600 mb-6">Your enquiry has been successfully submitted.</p>
+            <button
+              onClick={() => {
+                setSuccessMessage(false);
+                onClose();
+              }}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors"
             >
-              {/* Row: Name + Email */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="field-name" className="mb-1 block text-xs font-semibold text-slate-900">
-                    Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="field-name"
-                    name="name"
-                    type="text"
-                    required
-                    placeholder="Rahul Sharma"
-                    value={form.name}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="field-email" className="mb-1 block text-xs font-semibold text-slate-900">
-                    Email <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="field-email"
-                    name="email"
-                    type="email"
-                    required
-                    placeholder="rahul@company.com"
-                    value={form.email}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  />
-                </div>
+              Close
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {errorMessage && (
+              <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-xs rounded-lg">
+                {errorMessage}
               </div>
+            )}
 
-              {/* Row: Phone + Company */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="field-phone" className="mb-1 block text-xs font-semibold text-slate-900">
-                    Phone Number <span className="text-red-500">*</span>
-                  </label>
-                  <div className="flex">
-                    <span className="inline-flex items-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-3 text-xs font-medium text-slate-500">
-                      +91
-                    </span>
-                    <input
-                      id="field-phone"
-                      name="phone"
-                      type="tel"
-                      required
-                      placeholder="98765 43210"
-                      value={form.phone}
-                      onChange={handleChange}
-                      className="w-full rounded-r-lg border border-gray-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="field-company" className="mb-1 block text-xs font-semibold text-slate-900">
-                    Company Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="field-company"
-                    name="company"
-                    type="text"
-                    required
-                    placeholder="Acme Corp Pvt. Ltd."
-                    value={form.company}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  />
-                </div>
-              </div>
-
-              {/* Domain */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="field-domain" className="mb-1 block text-xs font-semibold text-slate-900">
-                  Select Domain
-                </label>
-                <select
-                  id="field-domain"
-                  name="domain"
-                  value={form.domain}
-                  onChange={handleChange}
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
-                >
-                  <option value="">— Select a domain —</option>
-                  {DOMAINS.map((d) => (
-                    <option key={d} value={d}>{d}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Row: Candidates + Delivery Mode */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="field-candidates" className="mb-1 block text-xs font-semibold text-slate-900">
-                    No. of Candidates
-                  </label>
-                  <input
-                    id="field-candidates"
-                    name="candidates"
-                    type="number"
-                    min={1}
-                    placeholder="e.g. 50"
-                    value={form.candidates}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="field-delivery" className="mb-1 block text-xs font-semibold text-slate-900">
-                    Mode of Delivery
-                  </label>
-                  <select
-                    id="field-delivery"
-                    name="deliveryMode"
-                    value={form.deliveryMode}
-                    onChange={handleChange}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-slate-900 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
-                  >
-                    <option value="">— Select mode —</option>
-                    <option value="Online">Online</option>
-                    <option value="Offline">Offline</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Location */}
-              <div>
-                <label htmlFor="field-location" className="mb-1 block text-xs font-semibold text-slate-900">
-                  Location
-                </label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Name *</label>
                 <input
-                  id="field-location"
-                  name="location"
                   type="text"
-                  placeholder="e.g. Gurgaon, Delhi, India"
-                  value={form.location}
+                  name="name"
+                  required
+                  value={formData.name}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:outline-none focus:ring-1 focus:ring-blue-600"
+                  placeholder="Rahul Sharma"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Email *</label>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="rahul@company.com"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
 
-              {/* Error */}
-              {status === "error" && (
-                <p className="rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-600">
-                  {errorMsg}
-                </p>
-              )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Phone Number *</label>
+                <input
+                  type="text"
+                  name="phone"
+                  required
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="98765 43210"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Company Name *</label>
+                <input
+                  type="text"
+                  name="company"
+                  required
+                  value={formData.company}
+                  onChange={handleChange}
+                  placeholder="Acme Corp Pvt. Ltd."
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
 
-              {/* Submit Button */}
-              <button
-                id="enquire-form-submit"
-                type="submit"
-                disabled={status === "loading"}
-                className="w-full px-6 py-2.5 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-colors text-xs flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Select Domain</label>
+              <select
+                name="domain"
+                value={formData.domain}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                {status === "loading" ? (
-                  <>
-                    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                    </svg>
-                    Submitting…
-                  </>
-                ) : (
-                  "Submit Enquiry"
-                )}
-              </button>
+                <option value="">— Select a domain —</option>
+                <option value="Software Development">Software Development</option>
+                <option value="Data Science & AI">Data Science & AI</option>
+                <option value="Product Management">Product Management</option>
+              </select>
+            </div>
 
-              {/* <p className="text-center text-[11px] text-slate-500">
-                By submitting, you agree to our{" "}
-                <a href="#" className="underline hover:text-blue-600">Privacy Policy</a>.
-              </p> */}
-            </form>
-          )}
-        </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">No. of Candidates</label>
+                <input
+                  type="text"
+                  name="candidates"
+                  value={formData.candidates}
+                  onChange={handleChange}
+                  placeholder="e.g. 50"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Mode of Delivery</label>
+                <select
+                  name="mode"
+                  value={formData.mode}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">— Select mode —</option>
+                  <option value="Online">Online</option>
+                  <option value="Offline">Offline</option>
+                  <option value="Hybrid">Hybrid</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Location</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                placeholder="e.g. Gurgaon, Delhi, India"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all text-sm shadow-md"
+            >
+              {loading ? "Submitting..." : "Submit Enquiry"}
+            </button>
+
+            <p className="text-[11px] text-center text-slate-400">
+              By submitting, you agree to our Privacy Policy.
+            </p>
+          </form>
+        )}
       </div>
     </div>
   );
