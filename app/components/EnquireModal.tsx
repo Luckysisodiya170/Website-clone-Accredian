@@ -334,10 +334,10 @@ export default function EnquireModal() {
                 )}
               </button>
 
-              <p className="text-center text-[11px] text-slate-500">
+              {/* <p className="text-center text-[11px] text-slate-500">
                 By submitting, you agree to our{" "}
                 <a href="#" className="underline hover:text-blue-600">Privacy Policy</a>.
-              </p>
+              </p> */}
             </form>
           )}
         </div>

@@ -19,7 +19,7 @@ export default function Navbar() {
 
   return (
     <nav className="w-full bg-white fixed top-0 z-50 shadow-[0_25px_45px_-15px_rgba(0,0,0,0.10)]">
-      <div className="max-w-7xl w-full mx-auto px-4 md:px-8 flex justify-between items-center h-17">
+      <div className="max-w-7xl w-full mx-auto px-4 md:px-8 flex justify-around items-center h-17">
         
         <a href="#home" onClick={() => setActiveTab("Home")} className="flex items-center">
           <img 
