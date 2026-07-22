@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useModal } from "@/app/context/ModalContext";
 
-export default function EnquiryModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+export default function EnquiryModal() {
+  const { isOpen, closeModal } = useModal();
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -64,7 +67,7 @@ export default function EnquiryModal({ isOpen, onClose }: { isOpen: boolean; onC
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
       <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl p-6 sm:p-8 overflow-y-auto max-h-[90vh]">
         <button
-          onClick={onClose}
+          onClick={closeModal}
           className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-xl"
         >
           &times;
@@ -82,7 +85,7 @@ export default function EnquiryModal({ isOpen, onClose }: { isOpen: boolean; onC
             <button
               onClick={() => {
                 setSuccessMessage(false);
-                onClose();
+                closeModal();
               }}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold text-sm hover:bg-blue-700 transition-colors"
             >
