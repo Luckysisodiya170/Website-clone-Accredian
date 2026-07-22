@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+/* ─── Corporate Light-Mode Theme ─────────────────────────────────────────── */
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;   /* slate-900 */
+  --muted:      #64748b;   /* slate-500 */
+  --border:     #e2e8f0;   /* slate-200 */
+  --accent:     #2563eb;   /* blue-600  */
+  --accent-hover: #1d4ed8; /* Fixed hex code typo */
+  --surface:    #f8fafc;   /* slate-50  */
+}
+
+/* ─── Tailwind theme tokens ───────────────────────────────────────────────── */
+@theme inline {
+  --color-background:   var(--background);
+  --color-foreground:   var(--foreground);
+  --color-muted:        var(--muted);
+  --color-border:       var(--border);
+  --color-accent:       var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-surface:      var(--surface);
+}
+
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", "Segoe UI", Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--foreground);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
