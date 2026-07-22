@@ -6,7 +6,7 @@ export default function Hero() {
   const { openModal } = useModal();
 
   return (
-    <section id="home" className="max-w-[1950px] mx-auto px-4 sm:px-6 lg:px-12 mt-1.5 mb-8">
+    <section id="home" className="max-w-[1950px] mx-auto px-4 sm:px-6 lg:px-12 mt-20 mb-8">
       
       {/* Main Container */}
       <div className="w-full bg-[#f0f6ff] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-[0_0_50px_-5px_rgba(0,0,0,0.12),0_20px_40px_-10px_rgba(37,99,235,0.2)] grid grid-cols-1 md:grid-cols-12 items-stretch relative">

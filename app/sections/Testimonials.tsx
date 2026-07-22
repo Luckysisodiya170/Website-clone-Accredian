@@ -29,7 +29,7 @@ export default function Testimonials() {
   ];
 
   return (
-    <section className="max-w-[850px] mx-auto px-4 sm:px-6 py-8 mb-8">
+    <section id="reviews" className="max-w-[850px] mx-auto px-4 sm:px-6 py-8 mb-8">
       
       {/* Section Header */}
       <div className="text-center mb-6">

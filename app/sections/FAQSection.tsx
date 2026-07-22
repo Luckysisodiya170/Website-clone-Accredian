@@ -47,7 +47,7 @@ export default function FAQSection() {
   };
 
   return (
-    <section className="max-w-[1000px] mx-auto px-4 sm:px-6 py-10 mb-8">
+    <section id="faqs" className="max-w-[1000px] mx-auto px-4 sm:px-6 py-10 mb-8">
       
       {/* Section Title - Reduced Size */}
       <h2 className="text-2xl sm:text-[28px] font-extrabold text-slate-900 mb-8 sm:mb-10 tracking-tight text-center lg:text-left lg:ml-2">

@@ -37,7 +37,7 @@ export default function DeliverResults() {
   ];
 
   return (
-    <section className="max-w-[950px] mx-auto px-4 sm:px-6 py-6 mb-6">
+    <section id="process" className="max-w-[950px] mx-auto px-4 sm:px-6 py-6 mb-6">
       
       {/* Section Header - Extra Compact */}
       <div className="text-center mb-6">

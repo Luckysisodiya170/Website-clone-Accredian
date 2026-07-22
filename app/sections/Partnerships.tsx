@@ -5,7 +5,7 @@ function PartnerCard({ partner }: { partner: { name: string; src: string } }) {
   const [hasError, setHasError] = useState(false);
 
   return (
-    <div className="flex items-center justify-center h-12">
+    <div id="partnerships" className="flex items-center justify-center h-12">
       {!hasError ? (
         <img 
           src={partner.src} 

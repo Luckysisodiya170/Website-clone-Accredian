@@ -2,7 +2,7 @@
 
 export default function CatFramework() {
   return (
-    <section className="max-w-[1000px] mx-auto px-4 sm:px-6 py-4 mb-6">
+    <section id="cat" className="max-w-[1000px] mx-auto px-4 sm:px-6 py-4 mb-6">
       
       {/* Main Container */}
       <div className="bg-blue-50/70 rounded-2xl py-5 px-4 sm:px-6 shadow-sm">

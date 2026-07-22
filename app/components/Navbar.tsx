@@ -6,7 +6,7 @@ const NAV_LINKS = [
   { label: "Home", href: "#home" },
   { label: "Stats", href: "#stats" },
   { label: "Clients", href: "#partnerships" },
-  { label: "Accredian Edge", href: "#accredian-edge" },
+  { label: "Accredian Edge", href: "#edge" },
   { label: "CAT", href: "#cat" },
   { label: "How It Works", href: "#process" },
   { label: "FAQs", href: "#faqs" },
@@ -18,7 +18,7 @@ export default function Navbar() {
   const [activeTab, setActiveTab] = useState("Home");
 
   return (
-    <nav className="w-full bg-white sticky top-0 z-50 shadow-[0_25px_45px_-15px_rgba(0,0,0,0.10)]">
+    <nav className="w-full bg-white fixed top-0 z-50 shadow-[0_25px_45px_-15px_rgba(0,0,0,0.10)]">
       <div className="max-w-7xl w-full mx-auto px-4 md:px-8 flex justify-between items-center h-17">
         
         <a href="#home" onClick={() => setActiveTab("Home")} className="flex items-center">
