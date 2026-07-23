@@ -1,7 +1,10 @@
 "use client";
 import Link from "next/link";
+import { useModal } from "@/app/context/ModalContext";
 
 export default function Footer() {
+  const { openModal } = useModal();
+
   return (
     <footer className="w-full bg-transparent pt-5 pb-4 px-4 sm:px-6">
       <div className="max-w-[1000px] mx-auto bg-transparent">
@@ -55,7 +58,7 @@ export default function Footer() {
 
           {/* Right: CTA Button */}
           <div className="flex flex-col items-center md:items-end bg-transparent">
-            <button className="bg-blue-600 text-white font-semibold text-[13px] px-6 py-1.5 rounded-md hover:bg-blue-700 transition-colors mb-1">
+            <button className="bg-blue-600 text-white font-semibold text-[13px] px-6 py-1.5 rounded-md hover:bg-blue-700 transition-colors mb-1" onClick={openModal}>
               Enquire Now
             </button>
             <p className="text-[11px] text-slate-600 font-medium">

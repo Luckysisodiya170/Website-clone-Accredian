@@ -1,7 +1,10 @@
 "use client";
 import { useState } from "react";
+import { useModal } from "@/app/context/ModalContext";
+
 
 export default function FAQSection() {
+  const { openModal } = useModal();
   const [activeTab, setActiveTab] = useState("About the Course");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -119,7 +122,7 @@ export default function FAQSection() {
 
       {/* Centered Enquire Now Button - Reduced Size */}
       <div className="flex justify-center mt-10">
-        <button className="bg-blue-600 text-white text-[13px] sm:text-sm font-bold py-2.5 px-6 rounded-md shadow-sm hover:bg-blue-700 hover:shadow transition-all duration-300 transform hover:-translate-y-0.5">
+        <button className="bg-blue-600 text-white text-[13px] sm:text-sm font-bold py-2.5 px-6 rounded-md shadow-sm hover:bg-blue-700 hover:shadow transition-all duration-300 transform hover:-translate-y-0.5" onClick={openModal}>
           Enquire Now
         </button>
       </div>
